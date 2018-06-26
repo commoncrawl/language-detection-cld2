@@ -16,6 +16,8 @@
 
 package com.deezer.research.cld2;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Public interface for the CLD2 library.
  */
@@ -36,8 +38,34 @@ public class Cld2 {
     return Cld2Library.INSTANCE._ZN4CLD221DetectLanguageVersionEv();
   }
 
+  /**
+   * Encode input as native (null-terminated) bytes using UTF-8 as character
+   * encoding.
+   * 
+   * @param text
+   *          input string
+   * @return null-terminated UTF-8-encoded bytes
+   */
+  public static byte[] encodeNative(String text) {
+    byte[] jbytes = text.getBytes(StandardCharsets.UTF_8);
+    byte[] cbytes = new byte[jbytes.length+1];
+    System.arraycopy(jbytes, 0, cbytes, 0, jbytes.length);
+    return cbytes;
+  }
+
   public static Result detect(String text) {
-    boolean isPlainText = true;
+    return detect(encodeNative(text));
+  }
+
+  /**
+   * Detect language.
+   * 
+   * @param bytes
+   *          input text as null-terminated UTF-8-encoded bytes
+   * @return detection result
+   */
+  public static Result detect(byte[] bytes) {
+	  boolean isPlainText = true;
     CLDHints cldHints = new CLDHints(
         null,
         "",
@@ -49,15 +77,10 @@ public class Cld2 {
     double[] normalizedScore3 = new double[3];
     int[] textBytes = new int[1];
     boolean[] isReliable = new boolean[1];
-    byte[] utf8EncodedText;
-    try {
-      utf8EncodedText = text.getBytes("UTF-8");
-    } catch (java.io.UnsupportedEncodingException exc) {
-      return new Result("UNKNONW", "UNKNOWN", 0.0);
-    }
+
     int language = Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb(
-        utf8EncodedText,
-        utf8EncodedText.length,
+        bytes,
+        bytes.length,
         isPlainText,
         cldHints,
         flags,
