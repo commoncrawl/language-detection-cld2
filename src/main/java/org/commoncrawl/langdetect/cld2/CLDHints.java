@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.deezer.research.cld2;
+package org.commoncrawl.langdetect.cld2;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;

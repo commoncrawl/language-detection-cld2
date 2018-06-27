@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.deezer.research.cld2;
+package org.commoncrawl.langdetect.cld2;
 
 /**
  * Enum with the values of the different languages accepted by the CLD2 library.
