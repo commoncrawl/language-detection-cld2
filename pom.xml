@@ -23,6 +23,15 @@
 	</properties>
 
 	<build>
+		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources/</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+			</testResource>
+		</testResources>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -39,7 +48,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
+				<version>2.22.0</version>
 				<configuration>
 					<includes>
 						<include>**/Test*.java</include>
@@ -56,6 +65,30 @@
 						<version>${junit.platform.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>de.thetaphi</groupId>
+				<artifactId>forbiddenapis</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<targetVersion>${java.version}</targetVersion>
+					<failOnUnresolvableSignatures>false</failOnUnresolvableSignatures>
+					<failOnUnsupportedJava>false</failOnUnsupportedJava>
+					<bundledSignatures>
+						<bundledSignature>jdk-unsafe</bundledSignature>
+						<bundledSignature>jdk-deprecated</bundledSignature>
+						<bundledSignature>jdk-non-portable</bundledSignature>
+						<bundledSignature>jdk-internal</bundledSignature>
+					</bundledSignatures>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+							<goal>testCheck</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

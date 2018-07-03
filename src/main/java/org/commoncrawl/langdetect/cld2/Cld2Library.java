@@ -33,11 +33,14 @@ import com.sun.jna.ptr.PointerByReference;
  * <a href="http://jna.dev.java.net/">JNA</a>.
  */
 interface Cld2Library extends Library {
-  String JNA_LIBRARY_NAME = "cld2";
-  NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(Cld2Library.JNA_LIBRARY_NAME);
-  Cld2Library INSTANCE = (Cld2Library) Native.loadLibrary(Cld2Library.JNA_LIBRARY_NAME,
-                                                          Cld2Library.class);
 
+  String JNA_LIBRARY_NAME = "cld2";
+
+  NativeLibrary JNA_NATIVE_LIB = NativeLibrary
+      .getInstance(Cld2Library.JNA_LIBRARY_NAME);
+
+  Cld2Library INSTANCE = (Cld2Library) Native
+      .loadLibrary(Cld2Library.JNA_LIBRARY_NAME, Cld2Library.class);
 
   //String LanguageName(int lang);
   String _ZN4CLD212LanguageNameENS_8LanguageE(int lang);
@@ -56,4 +59,5 @@ interface Cld2Library extends Library {
 
   //String DetectLanguageVersion();
   String _ZN4CLD221DetectLanguageVersionEv();
+
 }

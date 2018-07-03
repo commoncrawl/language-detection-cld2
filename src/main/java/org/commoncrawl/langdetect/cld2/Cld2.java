@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-present Deezer.com
+ * Copyright 2014-present Deezer.com, 2018- CommonCrawl.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
  * Public interface for the CLD2 library.
  */
 public class Cld2 {
+
   public static int getLanguageFromName(String name) {
     return Cld2Library.INSTANCE._ZN4CLD219GetLanguageFromNameEPKc(name);
   }
@@ -65,33 +66,66 @@ public class Cld2 {
    * @return detection result
    */
   public static Result detect(byte[] bytes) {
-	  boolean isPlainText = true;
-    CLDHints cldHints = new CLDHints(
-        null,
-        "",
-        Encoding.UNKNOWN_ENCODING,
-        Language.UNKNOWN_LANGUAGE);
-    int flags = 0;
-    int[] language3 = new int[3];
-    int[] percent3 = new int[3];
-    double[] normalizedScore3 = new double[3];
-    int[] textBytes = new int[1];
-    boolean[] isReliable = new boolean[1];
+    return detect(bytes, CLDHints.NO_HINTS, 0, true);
+  }
 
+  public static Result detect(String text, CLDHints hints) {
+    return detect(encodeNative(text), hints);
+  }
+
+  public static Result detect(String text, boolean isPlainText) {
+    return detect(encodeNative(text), CLDHints.NO_HINTS, 0, isPlainText);
+  }
+
+  public static Result detect(byte[] bytes, CLDHints hints) {
+    return detect(bytes, hints, 0, true);
+  }
+
+  public static Result detect(byte[] bytes, CLDHints hints, Flags flags,
+      boolean isPlainText) {
+    return detect(bytes, hints, flags.get(), isPlainText);
+  }
+
+  public static Result detect(String text, CLDHints hints, Flags flags,
+      boolean isPlainText) {
+    return detect(encodeNative(text), hints, flags, isPlainText);
+  }
+
+  public static Result detect(String text, CLDHints hints, int flags,
+      boolean isPlainText) {
+    return detect(encodeNative(text), hints, flags, isPlainText);
+  }
+
+  /**
+   * Detect language.
+   * 
+   * @param bytes
+   *          input text as null-terminated UTF-8-encoded bytes
+   * @param hints
+   *          external hints (outside context) from context of web page
+   * @param flags
+   *          modify behavior of CLD2 library call
+   * @param isPlainText
+   *          whether to detect language of plain-text document or HTML page
+   * @return detection result
+   */
+  public static Result detect(byte[] bytes, CLDHints hints, int flags,
+      boolean isPlainText) {
+    Result res = new Result();
     int language = Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb(
         bytes,
         bytes.length,
         isPlainText,
-        cldHints,
+        hints,
         flags,
-        language3,
-        percent3,
-        normalizedScore3,
+        res.language3,
+        res.percent3,
+        res.normalizedScore3,
         null, // Supposed to be a vector of ResultChunks, but it is not direct to pass vectors.
-        textBytes,
-        isReliable);
+        res.textBytes,
+        res.isReliable);
+    res.setLanguage(language);
 
-    return new Result(
-        getLanguageName(language), getLanguageCode(language), percent3[0] / 100.0);
-    }
+    return res;
+  }
 }
