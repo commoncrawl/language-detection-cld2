@@ -49,6 +49,17 @@ public class Cld2 {
    */
   public static byte[] encodeNative(String text) {
     byte[] jbytes = text.getBytes(StandardCharsets.UTF_8);
+    return bytesToNative(jbytes);
+  }
+
+  /**
+   * Convert bytes to native bytes (null-terminated char* array).
+   * 
+   * @param bytes
+   *          input bytes, not null-terminated
+   * @return null-terminated bytes
+   */
+  public static byte[] bytesToNative(byte[] jbytes) {
     byte[] cbytes = new byte[jbytes.length+1];
     System.arraycopy(jbytes, 0, cbytes, 0, jbytes.length);
     return cbytes;
@@ -62,7 +73,9 @@ public class Cld2 {
    * Detect language.
    * 
    * @param bytes
-   *          input text as null-terminated UTF-8-encoded bytes
+   *          input text as null-terminated UTF-8-encoded bytes<br/>
+   *          Note that CLD2 may raise a segmentation fault if the input bytes
+   *          are not null-terminated or proper UTF-8.
    * @return detection result
    */
   public static Result detect(byte[] bytes) {
@@ -100,7 +113,9 @@ public class Cld2 {
    * Detect language.
    * 
    * @param bytes
-   *          input text as null-terminated UTF-8-encoded bytes
+   *          input text as null-terminated UTF-8-encoded bytes<br/>
+   *          Note that CLD2 may raise a segmentation fault if the input bytes
+   *          are not null-terminated or proper UTF-8.
    * @param hints
    *          external hints (outside context) from context of web page
    * @param flags
