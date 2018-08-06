@@ -40,8 +40,17 @@ public class Flags {
   /** Give best-effort answer, even on short text */
   public static final int kCLDFlagBestEffort = 0x4000;
 
+  public static final Flags BEST_EFFORT = new Flags();
+  static {
+    BEST_EFFORT.setBestEffort(true);
+  }
+
   private int flags = 0;
 
+  /**
+   * @param value
+   *          if true, give &quot;best-effort answer, even on short text&quot;
+   */
   public void setBestEffort(boolean value) {
     if (value) {
       flags |= kCLDFlagBestEffort;

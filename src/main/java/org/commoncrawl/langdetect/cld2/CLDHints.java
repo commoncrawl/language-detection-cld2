@@ -19,9 +19,13 @@ package org.commoncrawl.langdetect.cld2;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * External hints from web page passed to CLD2, see <a href=
@@ -56,6 +60,9 @@ public class CLDHints extends Structure {
 
   protected static CLDHints NO_HINTS = new CLDHints(null, "",
   Encoding.UNKNOWN_ENCODING.value(), Language.UNKNOWN_LANGUAGE.value());
+
+  private static final Pattern DOTPATTERN = Pattern.compile("\\.");
+
 
   public CLDHints() {
     super();
@@ -94,6 +101,43 @@ public class CLDHints extends Structure {
    */
   public void setTopLevelDomainHint(String topLevelDomain) {
     tld_hint = topLevelDomain;
+  }
+
+  /**
+   * @param host
+   *  host name to set top-level domain from
+   */
+  public void setTopLevelDomainHintFromHostName(String host) {
+    String[] hostParts = DOTPATTERN.split(host);
+    if (hostParts.length < 2) {
+      return;
+    }
+    String topLevelDomain = hostParts[hostParts.length - 1];
+    if (topLevelDomain.isEmpty()) {
+      return;
+    }
+    topLevelDomain = topLevelDomain.toLowerCase(Locale.ROOT);
+    char firstChar = topLevelDomain.charAt(0);
+    if (firstChar >= 0x61 && firstChar <= 0x7a) {
+      // an ASCII letter => host is not an IP address
+      tld_hint = topLevelDomain;
+    }
+  }
+
+  /**
+   * @param url
+   *          URL to set top-level domain from
+   */
+  public void setTopLevelDomainHint(URL url) {
+    setTopLevelDomainHintFromHostName(url.getHost());
+  }
+
+  /**
+   * @param uri
+   *          URI to set top-level domain from
+   */
+  public void setTopLevelDomainHint(URI uri) {
+    setTopLevelDomainHintFromHostName(uri.getHost());
   }
 
   public void setEncodingHint(int encoding) {

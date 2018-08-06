@@ -44,6 +44,12 @@ To link the Java code with the native libraries, you need to make sure that Java
 - add the directory where your libcld2.so installed to the environment variable `LD_LIBRARY_PATH`
 - use the Java option `-Djava.library.path=...`
 
+#### Java Native Access (JNA) and libffi
+
+The CLD2 native functions are accessed via the [Java Native Access (JNA)](https://github.com/java-native-access/jna) which uses the [Foreign Function Interface Library (libffi)](https://sourceware.org/libffi/). JNA is a project dependency but the libffi needs to be present on your system. If not install it, e.g. 
+```
+apt-get install libffi6
+```
 
 ## History
 
@@ -52,9 +58,9 @@ This package has derived from https://github.com/deezer/weslang (package [com.de
 Further inspirations are taken from [CAFDataProcessing/worker-languagedetection](https://github.com/CAFDataProcessing/worker-languagedetection/tree/develop/language-detection-cld2), but this project depends on a modified version of CLD2 distributed only as a binary.
 
 Modifications/improvements:
-- use full set of 160+ languages
 - extended interface
 - support to pass as arguments Java objects of the classes Locale and Charset
+- proper ISO-639-3 language codes for all 160 languages
 
 
 ## License
