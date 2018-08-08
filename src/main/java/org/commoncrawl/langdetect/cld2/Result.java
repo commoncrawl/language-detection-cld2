@@ -110,9 +110,48 @@ public class Result {
     Language[] res = new Language[languages.length];
     for (int j = 0; j < languages.length; j++) {
       int i = languages[j];
-      res[j] = Language.get(i);
+      res[j] = Language.get(language3[i]);
     }
     return res;
+  }
+
+  /**
+   * @return array of ISO-639-3 codes of detected languages
+   */
+  public String[] getLanguageCodesISO639_3() {
+    int[] languages = prunedResults();
+    String[] res = new String[languages.length];
+    int k = -1, j = 0;
+    for (; j < languages.length; j++) {
+      int i = languages[j];
+      String code = Language.get(language3[i]).getCodeISO639_3();
+      if (code != null) {
+        res[++k] = code;
+      }
+    }
+    if (k < j) {
+      return Arrays.copyOf(res, k);
+    }
+    return res;
+  }
+
+  /**
+   * @return joined ISO-639-3 codes of detected languages
+   */
+  public String getLanguageCodesISO639_3(String separator) {
+    int[] languages = prunedResults();
+    StringBuilder sb = new StringBuilder();
+    for (int j = 0; j < languages.length; j++) {
+      int i = languages[j];
+      String code = Language.get(language3[i]).getCodeISO639_3();
+      if (code != null) {
+        if (sb.length() > 0) {
+          sb.append(separator);
+        }
+        sb.append(code);
+      }
+    }
+    return sb.toString();
   }
 
   public boolean isReliable() {
