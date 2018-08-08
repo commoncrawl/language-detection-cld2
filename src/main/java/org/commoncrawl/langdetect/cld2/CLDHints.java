@@ -19,6 +19,7 @@ package org.commoncrawl.langdetect.cld2;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -140,7 +141,15 @@ public class CLDHints extends Structure {
    *          URI to set top-level domain from
    */
   public void setTopLevelDomainHint(URI uri) {
-    setTopLevelDomainHintFromHostName(uri.getHost());
+    String host = uri.getHost();
+    if (host == null) {
+      // retry as URL, e.g., in case, the host name contains an underscore character
+      try {
+        host = uri.toURL().getHost();
+      } catch (MalformedURLException e) {
+      }
+    }
+    setTopLevelDomainHintFromHostName(host);
   }
 
   public void setEncodingHint(int encoding) {
