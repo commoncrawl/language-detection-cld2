@@ -116,17 +116,26 @@ public class Result {
   }
 
   /**
-   * @return array of ISO-639-3 codes of detected languages
+   * @param deduplicate
+   *          if true deduplicate ISO-639-3 codes (multiple CLD2 language can be
+   *          mapped to the same ISO-639-3 code)
+   * @return array of (deduplicated) ISO-639-3 codes of detected languages
    */
-  public String[] getLanguageCodesISO639_3() {
+  public String[] getLanguageCodesISO639_3(boolean deduplicate) {
     int[] languages = prunedResults();
     String[] res = new String[languages.length];
+    String[] dedup = { "", "" };
     int k = -1, j = 0;
     for (; j < languages.length; j++) {
       int i = languages[j];
-      String code = Language.get(language3[i]).getCodeISO639_3();
-      if (code != null) {
+      int l = language3[i];
+      String code = Language.get(l).getCodeISO639_3();
+      if (code != null && !(deduplicate && ((k >= 0 && dedup[k].equals(code))
+          || (k >= 1 && dedup[k - 1].equals(code))))) {
         res[++k] = code;
+        if (k < 2) {
+          dedup[k] = code;
+        }
       }
     }
     if (k < j) {
@@ -136,19 +145,30 @@ public class Result {
   }
 
   /**
-   * @return joined ISO-639-3 codes of detected languages
+   * @param separator
+   *          seperator between language codes
+   * @param deduplicate
+   *          if true deduplicate ISO-639-3 codes (multiple CLD2 language can be
+   *          mapped to the same ISO-639-3 code)
+   * @return joined (and deduplicated) ISO-639-3 codes of detected languages
    */
-  public String getLanguageCodesISO639_3(String separator) {
+  public String getLanguageCodesISO639_3(String separator, boolean deduplicate) {
     int[] languages = prunedResults();
     StringBuilder sb = new StringBuilder();
-    for (int j = 0; j < languages.length; j++) {
+    String[] dedup = { "", "" };
+    for (int k = -1, j = 0; j < languages.length; j++) {
       int i = languages[j];
-      String code = Language.get(language3[i]).getCodeISO639_3();
-      if (code != null) {
-        if (sb.length() > 0) {
+      int l = language3[i];
+      String code = Language.get(l).getCodeISO639_3();
+      if (code != null && !(deduplicate && ((k >= 0 && dedup[k].equals(code))
+          || (k >= 1 && dedup[k - 1].equals(code))))) {
+        if (++k > 0) {
           sb.append(separator);
         }
         sb.append(code);
+        if (k < 2) {
+          dedup[k] = code;
+        }
       }
     }
     return sb.toString();
