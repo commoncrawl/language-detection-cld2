@@ -108,6 +108,9 @@ public class CLDHints extends Structure {
    *  host name to set top-level domain from
    */
   public void setTopLevelDomainHintFromHostName(String host) {
+    if (host == null) {
+      return;
+    }
     String[] hostParts = DOTPATTERN.split(host);
     if (hostParts.length < 2) {
       return;
