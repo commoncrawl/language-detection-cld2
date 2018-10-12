@@ -6,6 +6,7 @@ The [Compact Language Detector 2](https://github.com/CLD2Owners/cld2) is a nativ
 ## Installation
 
 ### Native Library
+
 First, the library libcld2.so (or a .dll on Windows) needs to be installed.
 
 - on Debian-based systems the easiest way is to install the package [libcld-0](https://packages.debian.org/stretch/libcld2-0):
@@ -21,7 +22,10 @@ export CFLAGS="-Wno-narrowing -O3"
 ```
 If you only want the libraries, `./compile_libs.sh` is sufficient. You may use different compiler flags, the flag `-Wno-narrowing` is required for compilers which follow the C++11 standard.
 
-Both the Debian package and the source build provide two native libraries: libcld2.so and `libcld2_full.so`. The former supports 80+, the latter 160+ languages. However, the `libcld2_full.so` from the Debian package isn't a complete shared library - it only contains the tables used by the classifier. To use the larger tables for 160+ language instead of those for 80+ languages, you must use the [LD_PRELOAD trick](https://stackoverflow.com/questions/426230/what-is-the-ld-preload-trick) and set `LD_PRELOAD=libcld2_full.so`.
+
+#### Using the CLD2 Full Version (160+ languages)
+
+Both the Debian package and the source build provide two native libraries: `libcld2.so` and `libcld2_full.so`. The former supports 80+, the latter 160+ languages. However, the `libcld2_full.so` from the Debian package isn't a complete shared library - it only contains the tables used by the classifier. To use the larger tables for 160+ language instead of those for 80+ languages, you must use the [LD_PRELOAD trick](https://stackoverflow.com/questions/426230/what-is-the-ld-preload-trick) and set the environment variable `LD_PRELOAD=libcld2_full.so` (on Linux). In case, the language detector is used in Hadoop Map-Reduce jobs, this can be achieved by setting the Hadoop configuration property `mapreduce.reduce.env`, e.g., by passing `-Dmapreduce.reduce.env=LD_PRELOAD=libcld2_full.so` as command-line argument.
 
 
 ### Java Bindings
@@ -50,6 +54,19 @@ The CLD2 native functions are accessed via the [Java Native Access (JNA)](https:
 ```
 apt-get install libffi6
 ```
+
+#### Potential Issues on Other Platforms (Non-Linux)
+
+So far, the bindings have only been tested on Linux.
+
+One potential issue for ports to other platforms is the [mangling of C++ function names](https://en.wikipedia.org/wiki/Name_mangling). Function names called in the native library are registered in [Cld2Library](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2Library.java) and [Cld2](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2.java) using the mangled names, e.g., `_ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb`. The mangling may work differently on a different platform or when another C++-compiler is used.
+
+To adopt the Java bindings, you first need to get the mangled names from the shared object. On Linux this could be done by calling
+```
+% nm -D .../libcld2.so.0.0.197
+```
+The mangled function names in the two Java classes need to be replaced by the ones exposed by your native library. Please also see the notes in [Cld2](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2.java) regarding the creation of the bindings.
+
 
 ## History
 
