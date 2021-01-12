@@ -1,6 +1,6 @@
 # Java wrapper for the Compact Language Detector 2 library
 
-The [Compact Language Detector 2](https://github.com/CLD2Owners/cld2) is a native library written in C++ to detect the language of plain-text or HTML documents. Originally written for the Chromium web browser, the library is able to identify 80+ language (or 160+ in the full version). The classification uses identifies a language either by script (e.g., Greek), or uses a Naïve Bayesian classifier operating with 4-letter n-grams ("quadgrams") or (for  CJK languages) single-letter "unigrams". The classifier also accepts external hints, e.g., the top-level domain of a web page or the language code sent in the HTTP header.
+The [Compact Language Detector 2](https://github.com/CLD2Owners/cld2) is a native library written in C++ to detect the language of plain-text or HTML documents. Originally written for the Chromium web browser, the library is able to identify 80+ language (or 160+ in the full version). A language is identified either by script (e.g., Greek), or using a Naïve Bayesian classifier operating with 4-letter n-grams ("quadgrams") or (for CJK languages) single-letter "unigrams". The classifier also accepts external hints, e.g., the top-level domain of a web page or the language code sent in the HTTP header. The input (either text or HTML document) must be already in UTF-8 encoding.
 
 
 ## Installation
