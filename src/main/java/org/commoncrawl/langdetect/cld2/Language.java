@@ -203,7 +203,7 @@ public enum Language {
   CEBUANO               ("ceb", 165),  // ceb
   EWE                   ("ewe", 166),  // ee
   GA                    ("gaa", 167),  // gaa
-  HMONG                 ("blu", 168),  // blu  = [hmv,mww,...]
+  HMONG                 ("hmn", 168),  // hmn - used to be "blu" (see https://iso639-3.sil.org/code/blu)
   KRIO                  ("kri", 169),  // kri
   LOZI                  ("loz", 170),  // loz
   LUBA_LULUA            ("lua", 171),  // lua
