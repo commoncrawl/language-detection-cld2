@@ -127,7 +127,7 @@ public class Cld2 {
   public static Result detect(byte[] bytes, CLDHints hints, int flags,
       boolean isPlainText) {
     Result res = new Result();
-    int language = Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb(
+    int language = Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPNSt3__16vectorINS_11ResultChunkENS9_9allocatorISB_EEEES7_Pb(
         bytes,
         bytes.length,
         isPlainText,
