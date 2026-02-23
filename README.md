@@ -16,7 +16,7 @@ apt-get install libcld2-0 libcld2-dev
 - to compile the CLD2 library from source:
 ```
 git clone https://github.com/CLD2Owners/cld2.git
-cd cld/internal/
+cd cld2/internal/
 export CFLAGS="-Wno-narrowing -O3"
 ./compile_and_test_all.sh
 ```
