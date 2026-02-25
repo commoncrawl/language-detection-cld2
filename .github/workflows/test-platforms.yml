@@ -1,0 +1,41 @@
+name: Build and test on multiple platforms
+
+on:
+  push:
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-amd64
+          - os: ubuntu-latest-arm
+            platform: linux-arm
+          - os: macos-13
+            platform: darwin-amd64
+          - os: macos-latest
+            platform: darwin-aarch64
+
+    name: Build and test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build and test
+        run: mvn clean test -q
+
+      - name: Verify native library loaded
+        run: |
+          echo "Testing on ${{ matrix.platform }}"
+          mvn verify
