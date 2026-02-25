@@ -28,7 +28,15 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface Cld2Library extends Library {
 
-  String JNA_LIBRARY_NAME = "cld2";
+  String CLD2_LIBRARY_VARIANT_PROPERTY = "cld2.library";
+  String VARIANT_STANDARD = "cld2";
+  String VARIANT_FULL = "cld2_full";
+
+  static String getLibraryName() {
+      return System.getProperty(CLD2_LIBRARY_VARIANT_PROPERTY, VARIANT_STANDARD);
+  }
+
+  String JNA_LIBRARY_NAME = getLibraryName();
 
   static NativeLibrary loadLibrary() {
     // Try to load from jna.library.path first (allows override)

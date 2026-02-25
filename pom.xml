@@ -77,6 +77,26 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>full</id>
+			<properties>
+				<cld2.library>cld2_full</cld2.library>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>3.5.4</version>
+						<configuration>
+							<argLine>-Dcld2.library=cld2_full</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 
 	<dependencies>
 
