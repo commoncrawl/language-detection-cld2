@@ -22,9 +22,6 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import com.sun.jna.ptr.PointerByReference;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 /**
  * JNA Wrapper for library <b>Cld2</b>
@@ -45,14 +42,14 @@ public interface Cld2Library extends Library {
         return NativeLibrary.getInstance(resourcePath);
       } catch (UnsatisfiedLinkError e2) {
         // Fall back to system library search
-        return NativeLibrary.getInstance(JNA_LIBRARY_NAME);
+        return NativeLibrary.getInstance(Cld2Library.JNA_LIBRARY_NAME);
       }
     }
   }
 
   NativeLibrary JNA_NATIVE_LIB = loadLibrary();
 
-  Cld2Library INSTANCE = (Cld2Library) Native.load(JNA_LIBRARY_NAME,
+  Cld2Library INSTANCE = (Cld2Library) Native.load(Cld2Library.JNA_LIBRARY_NAME,
       Cld2Library.class);
 
   //String LanguageName(int lang);
@@ -65,8 +62,14 @@ public interface Cld2Library extends Library {
   int _ZN4CLD219GetLanguageFromNameEPKc(String src);
 
   //int ExtDetectLanguageSummary(String buffer, int buffer_length, byte is_plain_text, CLDHints cld_hints, int flags, IntBuffer language3, IntBuffer percent3, DoubleBuffer normalized_score3, PointerByReference resultchunkvector, IntBuffer text_bytes, ByteBuffer is_reliable);
-  // Note: libc++ (macOS) uses NSt3__16vector, libstdc++ (Linux) uses St6vector
+  // libc++ (macOS) uses NSt3__16vector
   int _ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPNSt3__16vectorINS_11ResultChunkENS9_9allocatorISB_EEEES7_Pb(
+    byte[] buffer, int bufferLength, boolean isPlainText, CLDHints cldHints, int flags,
+    int[] language3, int[] percent3, double[] normalizedScore3,
+    PointerByReference resultchunkvector, int[] textBytes, boolean[] isReliable);
+
+  // libstdc++ (Linux) uses St6vector
+  int _ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb(
     byte[] buffer, int bufferLength, boolean isPlainText, CLDHints cldHints, int flags,
     int[] language3, int[] percent3, double[] normalizedScore3,
     PointerByReference resultchunkvector, int[] textBytes, boolean[] isReliable);

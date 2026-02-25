@@ -18,6 +18,8 @@ package org.commoncrawl.langdetect.cld2;
 
 import java.nio.charset.StandardCharsets;
 
+import com.sun.jna.ptr.PointerByReference;
+
 /**
  * Public interface for the CLD2 library.
  */
@@ -127,7 +129,7 @@ public class Cld2 {
   public static Result detect(byte[] bytes, CLDHints hints, int flags,
       boolean isPlainText) {
     Result res = new Result();
-    int language = Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPNSt3__16vectorINS_11ResultChunkENS9_9allocatorISB_EEEES7_Pb(
+    int language = invokeExtDetectLanguageSummary(
         bytes,
         bytes.length,
         isPlainText,
@@ -142,5 +144,21 @@ public class Cld2 {
     res.setLanguage(language);
 
     return res;
+  }
+
+  private static int invokeExtDetectLanguageSummary(
+      byte[] buffer, int bufferLength, boolean isPlainText, CLDHints hints, int flags,
+      int[] language3, int[] percent3, double[] normalizedScore3,
+      PointerByReference resultchunkvector, int[] textBytes, boolean[] isReliable) {
+    // Try libstdc++ (Linux) first, then libc++ (macOs)
+    try {
+      return Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb(
+          buffer, bufferLength, isPlainText, hints, flags,
+          language3, percent3, normalizedScore3, resultchunkvector, textBytes, isReliable);
+    } catch (UnsatisfiedLinkError e) {
+      return Cld2Library.INSTANCE._ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPNSt3__16vectorINS_11ResultChunkENS9_9allocatorISB_EEEES7_Pb(
+          buffer, bufferLength, isPlainText, hints, flags,
+          language3, percent3, normalizedScore3, resultchunkvector, textBytes, isReliable);
+    }
   }
 }
