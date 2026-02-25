@@ -12,13 +12,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            platform: linux-amd64
+            platform: linux-x86_64
           - os: ubuntu-latest-arm
-            platform: linux-arm
-          - os: macos-13
-            platform: darwin-amd64
+            platform: linux-arm64
+          - os: macos-15-intel
+            platform: darwin-x86_64
           - os: macos-latest
-            platform: darwin-aarch64
+            platform: darwin-arm64
 
     name: Build and test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
