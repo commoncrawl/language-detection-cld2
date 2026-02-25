@@ -10,17 +10,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            platform: linux-x86_64
-          - os: ubuntu-latest-arm
-            platform: linux-arm64
-          - os: macos-15-intel
-            platform: darwin-x86_64
-          - os: macos-latest
-            platform: darwin-arm64
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15-intel, macos-latest]
 
-    name: Build and test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -37,5 +28,5 @@ jobs:
 
       - name: Verify native library loaded
         run: |
-          echo "Testing on ${{ matrix.platform }}"
+          echo "Testing on ${{ matrix.os }}"
           mvn verify
