@@ -9,3 +9,7 @@ hs_err_pid*
 .settings/
 
 .idea
+
+# Native libraries (use build-native profile to build)
+src/main/resources/linux-*/
+src/main/resources/darwin-*/

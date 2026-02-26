@@ -79,12 +79,149 @@
 
 	<profiles>
 		<profile>
-			<id>full</id>
-			<properties>
-				<cld2.library>cld2_full</cld2.library>
-			</properties>
+			<id>system</id>
+		</profile>
+		<profile>
+			<id>standard</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>build-cld2</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<exec executable="git" failonerror="true" dir="${project.build.directory}">
+											<arg line="clone --depth 1 -b feature/mac-arm-support https://github.com/lfoppiano/CLD2.git"/>
+										</exec>
+										<exec executable="sh" failonerror="true" dir="${project.build.directory}/CLD2/internal">
+											<arg value="compile_libs.sh"/>
+										</exec>
+										<condition property="native.prefix" value="darwin-aarch64">
+											<and>
+												<os family="mac"/>
+												<os arch="aarch64"/>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="darwin-x86-64">
+											<and>
+												<os family="mac"/>
+												<not>
+													<os arch="aarch64"/>
+												</not>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="linux-aarch64">
+											<and>
+												<os family="unix"/>
+												<not>
+													<os family="mac"/>
+												</not>
+												<os arch="aarch64"/>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="linux-x86-64">
+											<and>
+												<os family="unix"/>
+												<not>
+													<os family="mac"/>
+												</not>
+												<not>
+													<os arch="aarch64"/>
+												</not>
+											</and>
+										</condition>
+										<mkdir dir="${project.build.outputDirectory}/${native.prefix}"/>
+										<copy todir="${project.build.outputDirectory}/${native.prefix}">
+											<fileset dir="${project.build.directory}/CLD2/internal">
+												<include name="libcld2.*"/>
+												<include name="libcld2_full.*"/>
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>full</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>build-cld2</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<exec executable="git" failonerror="true" dir="${project.build.directory}">
+											<arg line="clone --depth 1 -b feature/mac-arm-support https://github.com/lfoppiano/CLD2.git"/>
+										</exec>
+										<exec executable="sh" failonerror="true" dir="${project.build.directory}/CLD2/internal">
+											<arg value="compile_libs.sh"/>
+										</exec>
+										<condition property="native.prefix" value="darwin-aarch64">
+											<and>
+												<os family="mac"/>
+												<os arch="aarch64"/>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="darwin-x86-64">
+											<and>
+												<os family="mac"/>
+												<not>
+													<os arch="aarch64"/>
+												</not>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="linux-aarch64">
+											<and>
+												<os family="unix"/>
+												<not>
+													<os family="mac"/>
+												</not>
+												<os arch="aarch64"/>
+											</and>
+										</condition>
+										<condition property="native.prefix" value="linux-x86-64">
+											<and>
+												<os family="unix"/>
+												<not>
+													<os family="mac"/>
+												</not>
+												<not>
+													<os arch="aarch64"/>
+												</not>
+											</and>
+										</condition>
+										<mkdir dir="${project.build.outputDirectory}/${native.prefix}"/>
+										<copy todir="${project.build.outputDirectory}/${native.prefix}">
+											<fileset dir="${project.build.directory}/CLD2/internal">
+												<include name="libcld2.*"/>
+												<include name="libcld2_full.*"/>
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>3.5.4</version>

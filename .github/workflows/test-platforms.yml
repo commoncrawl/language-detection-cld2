@@ -10,23 +10,48 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15-intel, macos-latest]
-        variant: [standard, full]
+        include:
+          - os: ubuntu-24.04
+            variant: system
+          - os: ubuntu-24.04-arm
+            variant: system
+          - os: ubuntu-24.04
+            variant: standard
+          - os: ubuntu-24.04-arm
+            variant: standard
+          - os: macos-15-intel
+            variant: standard
+          - os: macos-latest
+            variant: standard
+          - os: ubuntu-24.04
+            variant: full
+          - os: ubuntu-24.04-arm
+            variant: full
+          - os: macos-15-intel
+            variant: full
+          - os: macos-latest
+            variant: full
 
     runs-on: ${{ matrix.os }}
-
-    continue-on-error: ${{ matrix.variant == 'full' }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Linux dependencies
+      - name: Install libffi (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libffi8
+        run: sudo apt-get update && sudo apt-get install -y libffi-dev
 
-      - name: Install macOS dependencies
+      - name: Install libffi (macOS)
         if: runner.os == 'macOS'
         run: brew install libffi
+
+      - name: Install system CLD2 library (Linux system profile)
+        if: matrix.variant == 'system'
+        run: sudo apt-get install -y libcld2-0 libcld2-dev
+
+      - name: Install build tools (Linux standard/full profiles)
+        if: runner.os == 'Linux' && matrix.variant != 'system'
+        run: sudo apt-get install -y build-essential
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -34,14 +59,5 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build and test (standard)
-        if: matrix.variant == 'standard'
-        run: mvn clean verify -q
-
-      - name: Build and test (full)
-        if: matrix.variant == 'full'
-        run: mvn clean verify -Pfull -q
-
-      - name: Verify native library loaded
-        run: |
-          echo "Testing ${{ matrix.variant }} variant on ${{ matrix.os }}"
+      - name: Build and test
+        run: mvn clean verify -P${{ matrix.variant }} -q
