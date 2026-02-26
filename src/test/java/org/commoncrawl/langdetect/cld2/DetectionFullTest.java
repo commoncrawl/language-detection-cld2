@@ -17,9 +17,8 @@
 
 package org.commoncrawl.langdetect.cld2;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,16 +27,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DetectionTest {
+public class DetectionFullTest {
 
   @BeforeEach
-  void assumeStandardLibrary() {
+  void assumeFullLibrary() {
     String loadedLibrary = System.getProperty(Cld2Library.CLD2_LIBRARY_VARIANT_PROPERTY, Cld2Library.VARIANT_STANDARD);
-    assumeTrue(Cld2Library.VARIANT_STANDARD.equals(loadedLibrary),
-        "Test requires standard cld2 library, but '" + loadedLibrary + "' is loaded");
+    assumeTrue(Cld2Library.VARIANT_FULL.equals(loadedLibrary),
+        "Test requires cld2_full library, but '" + loadedLibrary + "' is loaded");
   }
 
   protected void run(String testFile, Function<String, Result> detectFunc,
@@ -109,7 +109,7 @@ public class DetectionTest {
   private static BufferedReader openTestData(String fileName)
       throws IOException {
     return new BufferedReader(new InputStreamReader(
-        DetectionTest.class.getClassLoader().getResourceAsStream(fileName),
+        DetectionFullTest.class.getClassLoader().getResourceAsStream(fileName),
         StandardCharsets.UTF_8));
   }
 
