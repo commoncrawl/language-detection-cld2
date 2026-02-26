@@ -5,14 +5,14 @@ The [Compact Language Detector 2](https://github.com/CLD2Owners/cld2) is a nativ
 
 ## Installation
 
-This project supports three build profiles:
+This project supports four build profiles:
 
 | Profile       | Description                                                              | Platforms        |
 | ------------- | ----------------------------------------------------------------------- | ----------------|
 | *(default)*   | No native library bundled. Requires system library or `-Djava.library.path` | Any             |
 | `system`     | Use system-installed libcld2 (Debian package)                          | Linux (Debian)  |
-| `build-native` | Clone and build CLD2 from source, bundle into JAR                       | Linux, macOS    |
-| `full`       | Build from source with full language support (160+)                     | Linux, macOS    |
+| `standard`   | Clone and build CLD2 from source, bundle into JAR                       | Linux, macOS    |
+| `full`       | Build from source with full language support (160+)                     | Linux           |
 
 ### System Library (Linux/Debian)
 
@@ -28,12 +28,12 @@ mvn clean verify -Psystem
 
 ### Build from Source
 
-For Linux or macOS, use the `build-native` profile to clone and build CLD2 from source:
+For Linux or macOS, use the `standard` profile to clone and build CLD2 from source:
 ```
-mvn clean verify -Pbuild-native
+mvn clean verify -Pstandard
 ```
 
-This clones [lfoppiano/CLD2](https://github.com/lfoppiano/CLD2) and builds both `libcld2.so`/`libcld2.dylib` and `libcld2_full.so`/`libcld2_full.dylib`, then bundles them into the JAR.
+This clones [lfoppiano/CLD2](https://github.com/lfoppiano/CLD2) and builds `libcld2`, then bundles it into the JAR.
 
 **Prerequisites:**
 - Linux: `build-essential`, `git`
@@ -41,13 +41,15 @@ This clones [lfoppiano/CLD2](https://github.com/lfoppiano/CLD2) and builds both 
 
 ### Full Language Support (160+ languages)
 
-Use the `full` profile to build with full language support:
+The `full` profile is **Linux only**. It builds both `libcld2` and `libcld2_full` from source and uses `LD_PRELOAD` to load the full language tables during testing:
 
 ```
 mvn clean verify -Pfull
 ```
 
-This builds from source and runs tests using the `libcld2_full` variant.
+The `libcld2_full` library only contains the classifier tables for 160+ languages — it is not a standalone library. At runtime, use `LD_PRELOAD=libcld2_full.so` to override the standard tables in `libcld2`. For Hadoop Map-Reduce jobs, pass `-Dmapreduce.reduce.env=LD_PRELOAD=libcld2_full.so`.
+
+**Why Linux only?** The macOS equivalent (`DYLD_INSERT_LIBRARIES`) does not work because System Integrity Protection (SIP) strips all `DYLD_*` environment variables from child processes, including the JVM forked by Maven Surefire.
 
 ### Using Without Maven Profiles
 
