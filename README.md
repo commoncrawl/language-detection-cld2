@@ -42,6 +42,7 @@ This clones [lfoppiano/CLD2](https://github.com/lfoppiano/CLD2) and builds both 
 ### Full Language Support (160+ languages)
 
 Use the `full` profile to build with full language support:
+
 ```
 mvn clean verify -Pfull
 ```
