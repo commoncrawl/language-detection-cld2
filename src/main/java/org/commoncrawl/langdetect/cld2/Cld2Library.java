@@ -28,37 +28,25 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface Cld2Library extends Library {
 
-  String CLD2_LIBRARY_VARIANT_PROPERTY = "cld2.library";
-  String VARIANT_STANDARD = "cld2";
-  String VARIANT_FULL = "cld2_full";
-
-  static String getLibraryName() {
-      return System.getProperty(CLD2_LIBRARY_VARIANT_PROPERTY, VARIANT_STANDARD);
-  }
-
-  String JNA_LIBRARY_NAME = getLibraryName();
+  String JNA_LIBRARY_NAME = "cld2";
 
   static NativeLibrary loadLibrary() {
-    // Try to load from jna.library.path first (allows override)
     try {
       return NativeLibrary.getInstance(JNA_LIBRARY_NAME);
     } catch (UnsatisfiedLinkError e) {
-      // Try to load from classpath resources
       String resourcePath = "/" + Platform.RESOURCE_PREFIX + "/" + JNA_LIBRARY_NAME + 
           (Platform.isMac() ? ".dylib" : ".so");
       try {
         return NativeLibrary.getInstance(resourcePath);
       } catch (UnsatisfiedLinkError e2) {
-        // Fall back to system library search
-        return NativeLibrary.getInstance(Cld2Library.JNA_LIBRARY_NAME);
+        return NativeLibrary.getInstance(JNA_LIBRARY_NAME);
       }
     }
   }
 
   NativeLibrary JNA_NATIVE_LIB = loadLibrary();
 
-  Cld2Library INSTANCE = (Cld2Library) Native.load(Cld2Library.JNA_LIBRARY_NAME,
-      Cld2Library.class);
+  Cld2Library INSTANCE = (Cld2Library) Native.load("cld2", Cld2Library.class);
 
   //String LanguageName(int lang);
   String _ZN4CLD212LanguageNameENS_8LanguageE(int lang);

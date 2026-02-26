@@ -33,13 +33,6 @@ import org.junit.jupiter.api.Test;
 
 public class DetectionTest {
 
-  @BeforeEach
-  void assumeStandardLibrary() {
-    String loadedLibrary = System.getProperty(Cld2Library.CLD2_LIBRARY_VARIANT_PROPERTY, Cld2Library.VARIANT_STANDARD);
-    assumeTrue(Cld2Library.VARIANT_STANDARD.equals(loadedLibrary),
-        "Test requires standard cld2 library, but '" + loadedLibrary + "' is loaded");
-  }
-
   protected void run(String testFile, Function<String, Result> detectFunc,
       Function<String, String> getDocument) throws IOException {
     BufferedReader reader = openTestData(testFile);

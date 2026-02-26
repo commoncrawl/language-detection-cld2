@@ -23,6 +23,13 @@
 	</properties>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.0</version>
+			</extension>
+		</extensions>
 		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
 		<testResources>
 			<testResource>
@@ -237,7 +244,11 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>3.5.4</version>
 						<configuration>
-							<argLine>-Dcld2.library=cld2_full</argLine>
+							<argLine>-Dcld2.full=true</argLine>
+							<environmentVariables>
+								<LD_PRELOAD>${project.build.directory}/classes/${os.detected.classifier}/libcld2_full.so</LD_PRELOAD>
+								<DYLD_INSERT_LIBRARIES>${project.build.directory}/classes/${os.detected.classifier}/libcld2_full.dylib</DYLD_INSERT_LIBRARIES>
+							</environmentVariables>
 						</configuration>
 					</plugin>
 				</plugins>
