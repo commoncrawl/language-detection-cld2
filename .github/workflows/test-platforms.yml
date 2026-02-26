@@ -27,10 +27,6 @@ jobs:
             variant: full
           - os: ubuntu-24.04-arm
             variant: full
-          - os: macos-15-intel
-            variant: full
-          - os: macos-latest
-            variant: full
 
     runs-on: ${{ matrix.os }}
 

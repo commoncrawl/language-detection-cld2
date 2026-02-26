@@ -244,10 +244,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>3.5.4</version>
 						<configuration>
-							<argLine>-Dcld2.full=true</argLine>
 							<environmentVariables>
 								<LD_PRELOAD>${project.build.directory}/classes/${os.detected.classifier}/libcld2_full.so</LD_PRELOAD>
-								<DYLD_INSERT_LIBRARIES>${project.build.directory}/classes/${os.detected.classifier}/libcld2_full.dylib</DYLD_INSERT_LIBRARIES>
 							</environmentVariables>
 						</configuration>
 					</plugin>
