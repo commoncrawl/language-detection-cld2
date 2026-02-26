@@ -101,8 +101,13 @@
 										<exec executable="git" failonerror="true" dir="${project.build.directory}">
 											<arg line="clone --depth 1 -b feature/mac-arm-support https://github.com/lfoppiano/CLD2.git"/>
 										</exec>
-										<exec executable="sh" failonerror="true" dir="${project.build.directory}/CLD2/internal">
-											<arg value="compile_libs.sh"/>
+										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
+											<arg value="-S."/>
+											<arg value="-Bbuild"/>
+										</exec>
+										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
+											<arg value="--build"/>
+											<arg value="build"/>
 										</exec>
 										<condition property="native.prefix" value="darwin-aarch64">
 											<and>
@@ -140,9 +145,8 @@
 										</condition>
 										<mkdir dir="${project.build.outputDirectory}/${native.prefix}"/>
 										<copy todir="${project.build.outputDirectory}/${native.prefix}">
-											<fileset dir="${project.build.directory}/CLD2/internal">
+											<fileset dir="${project.build.directory}/CLD2/build">
 												<include name="libcld2.*"/>
-												<include name="libcld2_full.*"/>
 											</fileset>
 										</copy>
 									</target>
@@ -173,8 +177,13 @@
 										<exec executable="git" failonerror="true" dir="${project.build.directory}">
 											<arg line="clone --depth 1 -b feature/mac-arm-support https://github.com/lfoppiano/CLD2.git"/>
 										</exec>
-										<exec executable="sh" failonerror="true" dir="${project.build.directory}/CLD2/internal">
-											<arg value="compile_libs.sh"/>
+										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
+											<arg value="-S."/>
+											<arg value="-Bbuild"/>
+										</exec>
+										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
+											<arg value="--build"/>
+											<arg value="build"/>
 										</exec>
 										<condition property="native.prefix" value="darwin-aarch64">
 											<and>
@@ -212,7 +221,7 @@
 										</condition>
 										<mkdir dir="${project.build.outputDirectory}/${native.prefix}"/>
 										<copy todir="${project.build.outputDirectory}/${native.prefix}">
-											<fileset dir="${project.build.directory}/CLD2/internal">
+											<fileset dir="${project.build.directory}/CLD2/build">
 												<include name="libcld2.*"/>
 												<include name="libcld2_full.*"/>
 											</fileset>
