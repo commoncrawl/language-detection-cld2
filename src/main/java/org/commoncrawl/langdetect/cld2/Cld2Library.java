@@ -18,7 +18,6 @@ package org.commoncrawl.langdetect.cld2;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -30,23 +29,21 @@ public interface Cld2Library extends Library {
 
   String JNA_LIBRARY_NAME = "cld2";
 
-  static NativeLibrary loadLibrary() {
+  Cld2Library INSTANCE = loadLibrary();
+
+  static Cld2Library loadLibrary() {
     try {
-      return NativeLibrary.getInstance(JNA_LIBRARY_NAME);
+      return (Cld2Library) Native.load(JNA_LIBRARY_NAME, Cld2Library.class);
     } catch (UnsatisfiedLinkError e) {
-      String resourcePath = "/" + Platform.RESOURCE_PREFIX + "/" + JNA_LIBRARY_NAME + 
+      String resourcePath = "/" + Platform.RESOURCE_PREFIX + "/" + JNA_LIBRARY_NAME +
           (Platform.isMac() ? ".dylib" : ".so");
       try {
-        return NativeLibrary.getInstance(resourcePath);
+        return (Cld2Library) Native.load(resourcePath, Cld2Library.class);
       } catch (UnsatisfiedLinkError e2) {
-        return NativeLibrary.getInstance(JNA_LIBRARY_NAME);
+        return (Cld2Library) Native.load(JNA_LIBRARY_NAME, Cld2Library.class);
       }
     }
   }
-
-  NativeLibrary JNA_NATIVE_LIB = loadLibrary();
-
-  Cld2Library INSTANCE = (Cld2Library) Native.load("cld2", Cld2Library.class);
 
   //String LanguageName(int lang);
   String _ZN4CLD212LanguageNameENS_8LanguageE(int lang);
@@ -72,5 +69,4 @@ public interface Cld2Library extends Library {
 
   //String DetectLanguageVersion();
   String _ZN4CLD221DetectLanguageVersionEv();
-
 }

@@ -81,7 +81,7 @@ public class Cld2 {
    * @return detection result
    */
   public static Result detect(byte[] bytes) {
-    return detect(bytes, CLDHints.NO_HINTS, 0, true);
+    return detect(bytes, CLDHints.getNoHints(), 0, true);
   }
 
   public static Result detect(String text, CLDHints hints) {
@@ -89,7 +89,7 @@ public class Cld2 {
   }
 
   public static Result detect(String text, boolean isPlainText) {
-    return detect(encodeNative(text), CLDHints.NO_HINTS, 0, isPlainText);
+    return detect(encodeNative(text), CLDHints.getNoHints(), 0, isPlainText);
   }
 
   public static Result detect(byte[] bytes, CLDHints hints) {
