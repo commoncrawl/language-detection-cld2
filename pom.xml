@@ -104,6 +104,7 @@
 										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
 											<arg value="-S."/>
 											<arg value="-Bbuild"/>
+											<arg value="-DCMAKE_CXX_FLAGS=-w"/>
 										</exec>
 										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
 											<arg value="--build"/>
@@ -180,6 +181,7 @@
 										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
 											<arg value="-S."/>
 											<arg value="-Bbuild"/>
+											<arg value="-DCMAKE_CXX_FLAGS=-w"/>
 										</exec>
 										<exec executable="cmake" failonerror="true" dir="${project.build.directory}/CLD2">
 											<arg value="--build"/>
