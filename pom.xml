@@ -14,12 +14,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 
-		<jna.version>5.17.0</jna.version>
+		<jna.version>5.19.1</jna.version>
 
-		<slf4j-api.version>2.0.17</slf4j-api.version>
+		<slf4j-api.version>2.0.18</slf4j-api.version>
 
-		<junit.jupiter.version>5.13.4</junit.jupiter.version>
-		<junit.platform.version>1.13.4</junit.platform.version>
+		<junit.jupiter.version>5.14.3</junit.jupiter.version>
+		<junit.platform.version>1.14.3</junit.platform.version>
 	</properties>
 
 	<build>
@@ -40,7 +40,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.1</version>
+				<version>3.15.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -48,7 +48,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.4</version>
+				<version>3.6.0-M1</version>
 			</plugin>
 			<plugin>
 				<groupId>de.thetaphi</groupId>
