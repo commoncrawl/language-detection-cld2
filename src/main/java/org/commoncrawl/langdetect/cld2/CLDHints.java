@@ -57,10 +57,16 @@ public class CLDHints extends Structure {
   public int encoding_hint = Encoding.UNKNOWN_ENCODING.value();
 
   /** ITALIAN boosts it */
-  public int language_hint = Language.UNKNOWN_LANGUAGE.value();
+  public int language_hint;
 
-  protected static CLDHints NO_HINTS = new CLDHints(null, "",
-  Encoding.UNKNOWN_ENCODING.value(), Language.UNKNOWN_LANGUAGE.value());
+  private static CLDHints noHints;
+
+  public static CLDHints getNoHints() {
+    if (noHints == null) {
+      noHints = new CLDHints(null, "", Encoding.UNKNOWN_ENCODING.value(), Language.UNKNOWN_LANGUAGE.value());
+    }
+    return noHints;
+  }
 
   private static final Pattern DOTPATTERN = Pattern.compile("\\.");
 

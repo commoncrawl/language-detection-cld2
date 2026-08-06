@@ -5,27 +5,62 @@ The [Compact Language Detector 2](https://github.com/CLD2Owners/cld2) is a nativ
 
 ## Installation
 
-### Native Library
+This project supports four build profiles:
 
-First, the library libcld2.so (or a .dll on Windows) needs to be installed.
+| Profile       | Description                                                              | Platforms        |
+| ------------- | ----------------------------------------------------------------------- | ----------------|
+| *(default)*   | No native library bundled. Requires system library or `-Djava.library.path` | Any             |
+| `system`     | Use system-installed libcld2 (Debian package)                          | Linux (Debian)  |
+| `standard`   | Clone and build CLD2 from source, bundle into JAR                       | Linux, macOS    |
+| `full`       | Build from source with full language support (160+)                     | Linux           |
 
-- on Debian-based systems the easiest way is to install the package [libcld-0](https://packages.debian.org/stretch/libcld2-0):
+### System Library (Linux/Debian)
+
+Install the native library via apt:
 ```
 apt-get install libcld2-0 libcld2-dev
 ```
-- to compile the CLD2 library from source:
+
+Then build with the `system` profile:
 ```
-git clone https://github.com/CLD2Owners/cld2.git
-cd cld2/internal/
-export CFLAGS="-Wno-narrowing -O3"
-./compile_and_test_all.sh
+mvn clean verify -Psystem
 ```
-If you only want the libraries, `./compile_libs.sh` is sufficient. You may use different compiler flags, the flag `-Wno-narrowing` is required for compilers which follow the C++11 standard.
 
+### Build from Source
 
-#### Using the CLD2 Full Version (160+ languages)
+For Linux or macOS, use the `standard` profile to clone and build CLD2 from source:
+```
+mvn clean verify -Pstandard
+```
 
-Both the Debian package and the source build provide two native libraries: `libcld2.so` and `libcld2_full.so`. The former supports 80+, the latter 160+ languages. However, the `libcld2_full.so` from the Debian package isn't a complete shared library - it only contains the tables used by the classifier. To use the larger tables for 160+ language instead of those for 80+ languages, you must use the [LD_PRELOAD trick](https://stackoverflow.com/questions/426230/what-is-the-ld-preload-trick) and set the environment variable `LD_PRELOAD=libcld2_full.so` (on Linux). In case, the language detector is used in Hadoop Map-Reduce jobs, this can be achieved by setting the Hadoop configuration property `mapreduce.reduce.env`, e.g., by passing `-Dmapreduce.reduce.env=LD_PRELOAD=libcld2_full.so` as command-line argument.
+This clones [lfoppiano/CLD2](https://github.com/lfoppiano/CLD2) and builds `libcld2`, then bundles it into the JAR.
+
+**Prerequisites:**
+- Linux: `build-essential`, `git`
+- macOS: Xcode Command Line Tools (includes git, clang++)
+
+### Full Language Support (160+ languages)
+
+The `full` profile is **Linux only**. It builds both `libcld2` and `libcld2_full` from source and uses `LD_PRELOAD` to load the full language tables during testing:
+
+```
+mvn clean verify -Pfull
+```
+
+The `libcld2_full` library only contains the classifier tables for 160+ languages — it is not a standalone library. At runtime, use `LD_PRELOAD=libcld2_full.so` to override the standard tables in `libcld2`. For Hadoop Map-Reduce jobs, pass `-Dmapreduce.reduce.env=LD_PRELOAD=libcld2_full.so`.
+
+**Why Linux only?** The macOS equivalent (`DYLD_INSERT_LIBRARIES`) does not work because System Integrity Protection (SIP) strips all `DYLD_*` environment variables from child processes, including the JVM forked by Maven Surefire.
+
+### Using Without Maven Profiles
+
+If not using a profile, you must provide the native library yourself:
+
+1. **Install system library** (see above), then:
+   ```
+   mvn clean verify -Djava.library.path=/usr/lib/x86_64-linux-gnu
+   ```
+
+2. **Or use JNA's classpath loading**: Place `libcld2.so`/`libcld2.dylib` on the classpath and JNA will find it.
 
 
 ### Java Bindings
@@ -43,29 +78,20 @@ and can then be used as dependency
 </dependency>
 ```
 
-To link the Java code with the native libraries, you need to make sure that Java can find the share object:
+To link the Java code with the native libraries when using the default build (without profiles), you need to make sure that Java can find the shared object:
 - either install the native library on a standard library path (already done when the Debian package is used)
 - add the directory where your libcld2.so installed to the environment variable `LD_LIBRARY_PATH`
 - use the Java option `-Djava.library.path=...`
 
 #### Java Native Access (JNA) and libffi
 
-The CLD2 native functions are accessed via the [Java Native Access (JNA)](https://github.com/java-native-access/jna) which uses the [Foreign Function Interface Library (libffi)](https://sourceware.org/libffi/). JNA is a project dependency but the libffi needs to be present on your system. If not install it, e.g. 
-```
-apt-get install libffi6
-```
+The CLD2 native functions are accessed via the [Java Native Access (JNA)](https://github.com/java-native-access/jna) which uses the [Foreign Function Interface Library (libffi)](https://sourceware.org/libffi/). JNA is a project dependency but libffi needs to be present on your system:
+- Linux (Debian/Ubuntu): `apt-get install libffi-dev`
+- macOS: `brew install libffi`
 
-#### Potential Issues on Other Platforms (Non-Linux)
+#### Platform Support
 
-So far, the bindings have only been tested on Linux.
-
-One potential issue for ports to other platforms is the [mangling of C++ function names](https://en.wikipedia.org/wiki/Name_mangling). Function names called in the native library are registered in [Cld2Library](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2Library.java) and [Cld2](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2.java) using the mangled names, e.g., `_ZN4CLD224ExtDetectLanguageSummaryEPKcibPKNS_8CLDHintsEiPNS_8LanguageEPiPdPSt6vectorINS_11ResultChunkESaISA_EES7_Pb`. The mangling may work differently on a different platform or when another C++-compiler is used.
-
-To adopt the Java bindings, you first need to get the mangled names from the shared object. On Linux this could be done by calling
-```
-% nm -D .../libcld2.so.0.0.197
-```
-The mangled function names in the two Java classes need to be replaced by the ones exposed by your native library. Please also see the notes in [Cld2](../blob/master/src/main/java/org/commoncrawl/langdetect/cld2/Cld2.java) regarding the creation of the bindings.
+The bindings have been tested on Linux (x86-64, ARM64) and macOS (Intel, Apple Silicon).
 
 
 ## History

@@ -1,0 +1,59 @@
+name: Build and test on multiple platforms
+
+on:
+  push:
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            variant: system
+          - os: ubuntu-24.04-arm
+            variant: system
+          - os: ubuntu-24.04
+            variant: standard
+          - os: ubuntu-24.04-arm
+            variant: standard
+          - os: macos-15-intel
+            variant: standard
+          - os: macos-latest
+            variant: standard
+          - os: ubuntu-24.04
+            variant: full
+          - os: ubuntu-24.04-arm
+            variant: full
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install libffi (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libffi-dev
+
+      - name: Install libffi (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libffi
+
+      - name: Install system CLD2 library (Linux system profile)
+        if: matrix.variant == 'system'
+        run: sudo apt-get install -y libcld2-0 libcld2-dev
+
+      - name: Install build tools (Linux standard/full profiles)
+        if: runner.os == 'Linux' && matrix.variant != 'system'
+        run: sudo apt-get install -y build-essential
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build and test
+        run: mvn clean verify -P${{ matrix.variant }} -q
