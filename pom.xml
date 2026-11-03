@@ -16,9 +16,9 @@
 
 		<jna.version>5.19.1</jna.version>
 
-		<slf4j-api.version>2.0.18</slf4j-api.version>
+		<slf4j-api.version>2.0.20</slf4j-api.version>
 
-		<junit.jupiter.version>5.14.3</junit.jupiter.version>
+		<junit.jupiter.version>5.14.4</junit.jupiter.version>
 		<junit.platform.version>1.14.3</junit.platform.version>
 	</properties>
 
@@ -40,7 +40,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.15.0</version>
+				<version>3.16.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -48,12 +48,12 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.6.0-M1</version>
+				<version>3.6.1</version>
 			</plugin>
 			<plugin>
 				<groupId>de.thetaphi</groupId>
 				<artifactId>forbiddenapis</artifactId>
-				<version>3.9</version>
+				<version>3.11</version>
 				<configuration>
 					<targetVersion>${java.version}</targetVersion>
 					<ignoreSignaturesOfMissingClasses>true</ignoreSignaturesOfMissingClasses>
