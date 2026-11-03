@@ -1,0 +1,41 @@
+name: Java CI with Maven
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        jdk: [11, 17, 21, 25]
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v6.0.1
+      with:
+        java-version: ${{ matrix.jdk }}
+        distribution: 'temurin'
+        cache: maven
+    - name: Cache local Maven repository
+      uses: actions/cache@v6
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Install CLD2
+      run: |
+        sudo apt-get update
+        sudo apt-get install libcld2-0 libcld2-dev
+    - name: Build with Maven
+      run: mvn -B verify --file pom.xml
